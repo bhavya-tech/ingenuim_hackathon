@@ -1,5 +1,3 @@
-from faulthandler import is_enabled
-from itertools import product
 from django.db import models
 from indian_cities.dj_city import cities
 # Create your models here.
@@ -13,14 +11,22 @@ class Region(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=100)
 
+    def __str__(self) -> str:
+        return self.name
+
 class Brand(models.Model):
     name = models.CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.name
 
 ###############################################################################################
 
 class Vendor(models.Model):
     name = models.CharField(max_length=100)
-    region = models.ForeignKey("Region", on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return self.name
 
 class ProductType(models.Model):
     name = models.CharField(max_length=100)
@@ -46,8 +52,28 @@ class Product(models.Model):
     compare = models.BooleanField(default=False)
     stock_keeping_unit = models.CharField(max_length=10)
     quantity = models.IntegerField()
+    system_name = models.CharField(max_length=1000, blank=True, null=True ,default=None)
 
+    def __str__(self) -> str:
+        return self.name
+
+    def get_price_range(self):
+        return str(
+            str(self.selling_price - (self.selling_price * self.type.price_percentage / 100)) 
+            + "-" 
+            + str(self.selling_price + (self.selling_price * self.type.price_percentage / 100))
+        )
+
+    def save(self, *args, **kwargs):
+        self.system_name = str(
+            str(self.type) + "_"
+            + str(self.brand) + "_"
+            + str(self.get_price_range()) + "_"
+            + str(self.stock_keeping_unit)
+        )
+                        
 ###############################################################################################
+
 class InventoryProduct(models.Model):
     inventory = models.ForeignKey("Inventory", on_delete=models.CASCADE)
     product = models.ForeignKey("Product", on_delete=models.CASCADE)
@@ -56,7 +82,7 @@ class InventoryProduct(models.Model):
     rate = models.FloatField()
 
 class Order(models.Model):
-    vendor = models.ForeignKey("Vendor", on_delete=models.CASCADE)
     product = models.ForeignKey("Product", on_delete=models.CASCADE)
+    inventory = models.ForeignKey("Inventory", on_delete=models.CASCADE)
     quantity = models.IntegerField()
     time = models.DateTimeField(auto_now_add=True)
