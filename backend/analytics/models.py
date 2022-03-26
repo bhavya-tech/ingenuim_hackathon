@@ -40,6 +40,9 @@ class Inventory(models.Model):
     vendor = models.ForeignKey("Vendor", on_delete=models.CASCADE)
     region = models.ForeignKey("Region", on_delete=models.CASCADE)
 
+    def __str__(self) -> str:
+        return self.vendor.name + " " + self.region.city
+
 class Product(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
@@ -71,6 +74,7 @@ class Product(models.Model):
             + str(self.get_price_range()) + "_"
             + str(self.stock_keeping_unit)
         )
+        super(Product, self).save(*args, **kwargs)
                         
 ###############################################################################################
 
