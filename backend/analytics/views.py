@@ -122,3 +122,24 @@ class FetchStoreStrengthList(APIView):
         except Exception as ex:
             raise ex
         return Response(data=response)
+
+
+class FetchTrendingVendorRegion(APIView):
+
+    def post(self, request):
+        response = {"status":500}
+        try:
+            data = request.data
+            store_strength = []
+            vendor_id = data.get("vendor_id")
+            inventory_stores = Inventory.objects.filter(vendor__id=vendor_id)
+            region_sell_count = {}
+            for store in inventory_stores:
+                region_sell_count[store.region.id] += Order.objects.filter(inventory__id=store.id).count()
+            response["trending_region"] = max(region_sell_count, key=region_sell_count.get)
+            response["status"] = 200
+        except Exception as ex:
+            raise ex
+        return Response(data=response)
+
+
