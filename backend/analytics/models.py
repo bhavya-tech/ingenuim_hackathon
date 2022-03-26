@@ -35,13 +35,16 @@ class ProductType(models.Model):
 
     def __str__(self) -> str:
         return self.name
-    
+
+class Inventory(models.Model):
+    vendor = models.ForeignKey("Vendor", on_delete=models.CASCADE)
+    region = models.ForeignKey("Region", on_delete=models.CASCADE)
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     image = models.ImageField(upload_to='product_images') #thumbnail
-    vendor = models.ForeignKey("Vendor", on_delete=models.CASCADE)
+    inventory = models.ForeignKey("Inventory", on_delete=models.CASCADE)
     selling_price = models.FloatField(default=0.0)
     brand = models.ForeignKey("Brand", on_delete=models.CASCADE)
     type = models.ForeignKey("ProductType", on_delete=models.CASCADE)
@@ -71,11 +74,6 @@ class Product(models.Model):
                         
 
 ###############################################################################################
-
-class Inventory(models.Model):
-    vendor = models.ForeignKey("Vendor", on_delete=models.CASCADE)
-    region = models.ForeignKey("Region", on_delete=models.CASCADE)
-
 class InventoryProduct(models.Model):
     inventory = models.ForeignKey("Inventory", on_delete=models.CASCADE)
     product = models.ForeignKey("Product", on_delete=models.CASCADE)
