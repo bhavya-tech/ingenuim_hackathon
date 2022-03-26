@@ -145,7 +145,7 @@ class RevenueStoreAPI(APIView):
     def post(self,request):
         data = request.data
         vendorId = data['vendorId']
-        Response = {}
+        response = {}
         order_objs = Order.objects.all(time__gte = datetime.datetime.now() - datetime.timedelta(days=30))
         net_revenue = 0.0
         revenue_list = []
@@ -162,16 +162,16 @@ class RevenueStoreAPI(APIView):
                 revenue_list['netRevenue'] = net_revenue
 
 
-        Response['status'] = 200
-        Response['revenue_list'] = revenue_list
-        return Response
+        response['status'] = 200
+        response['revenue_list'] = revenue_list
+        return Response(data=response)
 
 class OrderStoreAPI(APIView):
     def post(self,request):
         data = request.data
         vendorId = data['vendorId']
         inventory_objs = Inventory.objects.filter(vendor=vendorId)
-        Response = {}
+        response = {}
         revenue_quantity = []
         for inventory_obj in inventory_objs:
             order_inventory_objs = Order.objects.filter(inventory=inventory_obj.id,time__gte = datetime.datetime.now() - datetime.timedelta(days=30))
@@ -180,6 +180,33 @@ class OrderStoreAPI(APIView):
                 revenue_quantity['inventoryId'] = inventory_obj.id
                 revenue_quantity['quantity'] = quantity
 
-        Response['status'] = 200
-        Response['revenue_quantity'] = revenue_quantity
-        return Response
+        response['status'] = 200
+        response['revenue_quantity'] = revenue_quantity
+        return Response(data=response)
+
+class TopTrendingProducts(APIView):
+    def post(self,request):
+        data = request.data
+        vendorId = data['vendorId']
+        inventory_objs = Inventory.objects.filter(vendor=vendorId)
+        response = {}
+        trending = []
+        for inventory_obj in inventory_objs:
+            order_inventory_objs = Order.objects.filter(inventory=inventory_obj.id,time__range=(datetime.datetime.now()-datetime.timedelta(days=14),datetime.datetime.now()-datetime.timedelta(days=7)))
+            product_quantity = []
+            for order_inventory_obj in order_inventory_objs:
+                product_obj = Product.objects.get(pk=order_inventory_obj.product)
+                quantity = order_obj.quantity
+                net_revenue =  net_revenue + product_obj.selling_price*quantity
+                product_quantity.append(product_obj.id)
+            order_inventory_objs = Order.objects.filter(inventory=inventory_obj.id,time__range=(datetime.datetime.now()-datetime.timedelta(days=7),datetime.datetime.now()-datetime.timedelta(days=0)))
+            for order_inventory_obj in order_inventory_objs:
+                product_obj = Product.objects.get(pk=order_inventory_obj.product)
+                quantity = order_obj.quantity
+                net_revenue =  net_revenue + product_obj.selling_price*quantity
+                if product_obj.id in product_quantity:
+                    trending.append(product_obj.id)
+        response['status'] = 200
+        response['trening'] = trending
+
+        return Response(data=response)
