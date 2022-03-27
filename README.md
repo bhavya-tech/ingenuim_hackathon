@@ -1,8 +1,8 @@
-# ingenuim_hackathon
+# ingenium_hackathon
 
-This project is a backend api implementation for performing anaysis of inventory and trends. Given the necessary data like quantity, replenishing qunatity and depletion rate, the backend api will provide the user with the most relevant analytics needed to optimize their inventory.
+This project is a backend api implementation for performing anaysis of inventory and trends. Given the necessary data like quantity, replenishing quantity and depletion rate, the backend api will provide the user with the most relevant analytics needed to optimize their inventory.
 
-Currently, te visualizations like efficiency of stock replenishment, sales growth (revenue and profit) and categorical product analysis is being provided. This idea will then be extended to give user recommendations on how to optimize their inventory by transferring certain goods from one inventory to other.
+Currently, the visualizations like efficiency of stock replenishment, sales growth (revenue and profit) and categorical product analysis is being provided. This idea will then be extended to give user recommendations on how to optimize their inventory by transferring certain goods from one inventory to other.
 
 
 ## Setup
