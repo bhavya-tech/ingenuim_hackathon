@@ -1,4 +1,4 @@
-# ingenium_hackathon
+# Ingenious Hackathon
 
 This project is a backend api implementation for performing anaysis of inventory and trends. Given the necessary data like quantity, replenishing quantity and depletion rate, the backend api will provide the user with the most relevant analytics needed to optimize their inventory.
 
